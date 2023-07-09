@@ -55,6 +55,11 @@ Application {
                             width: pv.width
                             property string name: qsTr("Barometer")
                         }
+                        Altimeter {
+                            height: pv.height
+                            width: pv.width
+                            property string name: qsTr("Altimeter")
+                        }
                     }
 
                     path: Path {

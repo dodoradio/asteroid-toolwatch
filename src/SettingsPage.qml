@@ -42,6 +42,13 @@ Item {
                 icon: "ios-settings-outline"
                 onClicked: pageStack.push(barometerAdjustDialog,{})
             }
+            LabeledActionButton {
+                width: parent.width
+                height: width*0.2
+                text: qsTr("Adjust altimeter")
+                icon: "ios-settings-outline"
+                onClicked: pageStack.push(altimeterAdjustDialog,{})
+            }
         }
     }
     PressureSensor {
@@ -52,6 +59,11 @@ Item {
         id: barometerOffset
         key: "/org/asteroidos/sensors/barometer-offset"
         defaultValue: 0
+    }
+    ConfigurationValue {
+        id: altimeterOffset
+        key: "/org/asteroidos/sensors/altimeter-offset"
+        defaultValue: -8443
     }
     Component {
         id: barometerAdjustDialog
@@ -130,6 +142,79 @@ Item {
                 onClicked: {
                     var newValue = hundredsSelector.currentIndex*10000 + tensSelector.currentIndex*1000 + onesSelector.currentIndex*100 + tenthsSelector.currentIndex*10 + hundredthsSelector.currentIndex
                     barometerOffset.value = newValue - pressureSensor.reading.pressure
+                    pageStack.pop(pageStack.currentLayer)
+                }
+            }
+        }
+    }
+    Component {
+        id: altimeterAdjustDialog
+        Item {
+            id: root
+            Row {
+                id: valueSelector
+                anchors {
+                    left: parent.left
+                    leftMargin: DeviceInfo.hasRoundScreen ? Dims.w(5) : 0
+                    right: parent.right
+                    rightMargin: DeviceInfo.hasRoundScreen ? Dims.w(5) : 0
+                    verticalCenter: parent.verticalCenter
+                }
+                height: parent.height*0.6
+
+                CircularSpinner {
+                    id: thousandsSelector
+                    height: parent.height
+                    width: parent.width/3
+                    model: 10
+                    showSeparator: false
+                    delegate: SpinnerDelegate { text: index }
+                }
+                CircularSpinner {
+                    id: hundredsSelector
+                    height: parent.height
+                    width: parent.width/4
+                    model: 10
+                    showSeparator: false
+                    delegate: SpinnerDelegate { text: index }
+                }
+                CircularSpinner {
+                    id: tensSelector
+                    height: parent.height
+                    width: parent.width/4
+                    model: 10
+                    delegate: SpinnerDelegate { text: index }
+                }
+                CircularSpinner {
+                    id: onesSelector
+                    height: parent.height
+                    width: parent.width/4
+                    model: 10
+                    showSeparator: true
+                    delegate: SpinnerDelegate { text: index }
+                }
+            }
+
+            Component.onCompleted: {
+                var currValue = Math.round(altimeterOffset.value + pressureSensor.reading.pressure/12);
+                console.log(currValue)
+                thousandsSelector.currentIndex = Math.floor((currValue/1000))
+                hundredsSelector.currentIndex = Math.floor((currValue/100)%10)
+                tensSelector.currentIndex = Math.floor((currValue/10)%10)
+                onesSelector.currentIndex = Math.floor((currValue)%10)
+            }
+
+            IconButton {
+                iconName: "ios-checkmark-circle-outline"
+                anchors {
+                    bottom: parent.bottom
+                    horizontalCenter: parent.horizontalCenter
+                    bottomMargin: Dims.iconButtonMargin
+                }
+
+                onClicked: {
+                    var newValue = thousandsSelector.currentIndex*1000 + hundredsSelector.currentIndex*100 + tensSelector.currentIndex*10 + onesSelector.currentIndex
+                    altimeterOffset.value = newValue - Math.round(pressureSensor.reading.pressure/12)
                     pageStack.pop(pageStack.currentLayer)
                 }
             }
