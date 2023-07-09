@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>Compass.qml</file>
+        <file>Barometer.qml</file>
         <file>compass.svg</file>
+        <file>SettingsPage.qml</file>
     </qresource>
 </RCC>

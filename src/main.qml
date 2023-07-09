@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022 - Darrel Griët    <dgriet@gmail.com>
+ * Copyright (C) 2023 Arseniy Movshev <dodoradio@outlook.com>
+ *               2022 - Darrel Griët    <dgriet@gmail.com>
  *               2017 - Florent Revest  <revestflo@gmail.com>
  *                    - Niels Tholenaar <info@123quality.nl>
  *
@@ -19,8 +20,8 @@
 
 import QtQuick 2.5
 import org.asteroid.controls 1.0
-import QtSensors 5.3
 import QtGraphicalEffects 1.15
+import QtQml.Models 2.15
 
 Application {
     id: app
@@ -28,94 +29,49 @@ Application {
     centerColor: "#29A600"
     outerColor: "#070C00"
 
-    property int rotation: 0;
-    property int calibration: 0;
-    property int ringValueOffset: Math.sqrt(Math.pow(Dims.l(40), 2) / 2);
-
-    Compass {
-        active: true
-        onReadingChanged: {
-            app.rotation = reading.azimuth;
-            app.calibration = reading.calibrationLevel;
-        }
-    }
-
-    StatusPage {
-        //% "<h3>No data</h3>Calibrate the sensor by moving it in an ∞ figure."
-        text: qsTrId("id-no-data-calibrate")
-        icon: "ios-infinite-outline"
-        visible: !app.calibration
-    }
-
-    Item {
-        visible: app.calibration
-        anchors.fill: parent
-
-        Item {
-            id: centerDisplay
-            anchors.fill: parent
-            Label {
-                id: magneticRotation
-                anchors.centerIn: parent
-                text: app.rotation
-                font {
-                    pixelSize: parent.height / 4
-                    capitalization: Font.Capitalize
-                    styleName: "SemiCondensed"
-                    kerning: true
-                    preferShaping: true
-                }
-            }
-            Label {
-                id: degreeSymbol
-                anchors.top: magneticRotation.top
-                anchors.left: magneticRotation.right
-                text: "°"
-                font {
-                    pixelSize: parent.height / 4
-                    capitalization: Font.Capitalize
-                    styleName: "SemiCondensed"
-                    kerning: true
-                    preferShaping: true
-                }
-            }
-            Image {
-                anchors.top: parent.top
-                anchors.centerIn: parent
-                anchors.verticalCenterOffset: -Dims.l(35)
-                width: Dims.l(10)
-                height: width
-                source: "compass.svg"
-            }
-        }
-
-        Item {
-            anchors.fill: parent
-            rotation: -app.rotation
-            Repeater {
-                id: outerRing
-                anchors.fill: parent
-                model: 8
-                Label {
-                    property var angle: (index / outerRing.count) * 2 * Math.PI
-                    property var cardinalDirections: ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
-                    rotation: app.rotation
-                    color: index == 0 ? "#c2620c" : "white"
-                    text: cardinalDirections[index]
-                    anchors {
-                        centerIn: parent
-                        verticalCenterOffset: -Math.cos(angle) * Dims.l(40)
-                        horizontalCenterOffset: Math.sin(angle) * Dims.l(40)
+    LayerStack {
+        id: pageStack
+        firstPage: Component {
+            MouseArea {
+                id: mainPage
+                PathView { // modified from circularspinner in qml-asteroid
+                    id: pv
+                    width: parent.width
+                    height: Dims.h(100)
+                    preferredHighlightBegin: 0.5
+                    preferredHighlightEnd: 0.5
+                    highlightRangeMode: PathView.StrictlyEnforceRange
+                    highlightMoveDuration: 0
+                    clip: true
+                    model: ObjectModel {
+                        id: contentColumn
+                        Compass {
+                            height: pv.height
+                            width: pv.width
+                            property string name: qsTr("Compass")
+                        }
+                        Barometer {
+                            height: pv.height
+                            width: pv.width
+                            property string name: qsTr("Barometer")
+                        }
                     }
-                    font {
-                        pixelSize: index % 2 ? Dims.l(8) : Dims.l(10)
-                        capitalization: Font.Capitalize
-                        styleName: "Condensed Bold"
-                        kerning: true
-                        preferShaping: true
+
+                    path: Path {
+                        startX: pv.width/2; startY: pv.height/2-pv.count*pv.height/2
+                        PathLine { x: pv.width/2; y: pv.height/2+pv.count*pv.height/2 }
                     }
                 }
+
+                PageHeader {
+                    text: pv.currentItem.name
+                    z: 5
+                }
             }
         }
+    }
+    Component {
+        id: settingsPage
+        SettingsPage {}
     }
 }

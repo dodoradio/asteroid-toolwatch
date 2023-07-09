@@ -1,8 +1,8 @@
-add_library(asteroid-compass main.cpp resources.qrc)
-set_target_properties(asteroid-compass PROPERTIES PREFIX "")
+add_library(asteroid-toolwatch main.cpp resources.qrc)
+set_target_properties(asteroid-toolwatch PROPERTIES PREFIX "")
 
-target_link_libraries(asteroid-compass PUBLIC
+target_link_libraries(asteroid-toolwatch PUBLIC
 	AsteroidApp)
 
-install(TARGETS asteroid-compass
+install(TARGETS asteroid-toolwatch
 	DESTINATION ${CMAKE_INSTALL_LIBDIR})
