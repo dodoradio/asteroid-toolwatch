@@ -22,6 +22,7 @@ import QtQuick 2.5
 import org.asteroid.controls 1.0
 import QtGraphicalEffects 1.15
 import QtQml.Models 2.15
+import Nemo.Configuration 1.0
 
 Application {
     id: app
@@ -43,6 +44,8 @@ Application {
                     highlightRangeMode: PathView.StrictlyEnforceRange
                     highlightMoveDuration: 0
                     clip: true
+                    currentIndex: currentPaneStore.value
+                    onCurrentIndexChanged: currentPaneStore.value = currentIndex
                     model: ObjectModel {
                         id: contentColumn
                         Compass {
@@ -66,6 +69,11 @@ Application {
                         startX: pv.width/2; startY: pv.height/2-pv.count*pv.height/2
                         PathLine { x: pv.width/2; y: pv.height/2+pv.count*pv.height/2 }
                     }
+                }
+                ConfigurationValue {
+                    id: currentPaneStore
+                    key: "/org/asteroidos/toolwatch/mainPage/currentPane"
+                    defaultValue: true
                 }
 
                 PageHeader {
