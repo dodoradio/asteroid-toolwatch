@@ -63,7 +63,7 @@ Item {
     ConfigurationValue {
         id: altimeterOffset
         key: "/org/asteroidos/sensors/altimeter-offset"
-        defaultValue: -8443
+        defaultValue: 8443
     }
     Component {
         id: barometerAdjustDialog
@@ -163,9 +163,17 @@ Item {
                 height: parent.height*0.6
 
                 CircularSpinner {
+                    id: signSelector
+                    height: parent.height
+                    width: parent.width/5
+                    model: 2
+                    showSeparator: false
+                    delegate: SpinnerDelegate { text: index ? "-" : "+" }
+                }
+                CircularSpinner {
                     id: thousandsSelector
                     height: parent.height
-                    width: parent.width/3
+                    width: parent.width/5
                     model: 10
                     showSeparator: false
                     delegate: SpinnerDelegate { text: index }
@@ -173,7 +181,7 @@ Item {
                 CircularSpinner {
                     id: hundredsSelector
                     height: parent.height
-                    width: parent.width/4
+                    width: parent.width/5
                     model: 10
                     showSeparator: false
                     delegate: SpinnerDelegate { text: index }
@@ -181,23 +189,26 @@ Item {
                 CircularSpinner {
                     id: tensSelector
                     height: parent.height
-                    width: parent.width/4
+                    width: parent.width/5
                     model: 10
                     delegate: SpinnerDelegate { text: index }
                 }
                 CircularSpinner {
                     id: onesSelector
                     height: parent.height
-                    width: parent.width/4
+                    width: parent.width/5
                     model: 10
-                    showSeparator: true
                     delegate: SpinnerDelegate { text: index }
                 }
             }
 
             Component.onCompleted: {
-                var currValue = Math.round(altimeterOffset.value + pressureSensor.reading.pressure/12);
+                var currValue = Math.round(altimeterOffset.value - pressureSensor.reading.pressure/12);
                 console.log(currValue)
+                if (currValue < 0) {
+                    currValue = -currValue
+                    signSelector.currentIndex = 1
+                }
                 thousandsSelector.currentIndex = Math.floor((currValue/1000))
                 hundredsSelector.currentIndex = Math.floor((currValue/100)%10)
                 tensSelector.currentIndex = Math.floor((currValue/10)%10)
@@ -214,7 +225,10 @@ Item {
 
                 onClicked: {
                     var newValue = thousandsSelector.currentIndex*1000 + hundredsSelector.currentIndex*100 + tensSelector.currentIndex*10 + onesSelector.currentIndex
-                    altimeterOffset.value = newValue - Math.round(pressureSensor.reading.pressure/12)
+                    if (signSelector.currentIndex) {
+                        newValue = -newValue
+                    }
+                    altimeterOffset.value = Math.round(pressureSensor.reading.pressure/12) + newValue
                     pageStack.pop(pageStack.currentLayer)
                 }
             }

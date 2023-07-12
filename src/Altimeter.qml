@@ -44,13 +44,13 @@ Item {
         id: pressureText
         anchors.centerIn: parent
         horizontalAlignment: Text.AlignHCenter
-        text: Math.round(pressureSensor.reading.pressure/12 + altimeterOffset.value)
+        text: Math.round(-pressureSensor.reading.pressure/12 + altimeterOffset.value)
         font.pixelSize: parent.height / 4
     }
     ConfigurationValue {
         id: altimeterOffset
         key: "/org/asteroidos/sensors/altimeter-offset"
-        defaultValue: -8443
+        defaultValue: 8443
     }
     Label {
         anchors.horizontalCenter: parent.horizontalCenter
