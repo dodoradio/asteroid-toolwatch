@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022 - Darrel Griët    <dgriet@gmail.com>
+ * Copyright (C) 2023 - Arseniy Movshev <dodoradio@outlook.com>
+ *               2022 - Darrel Griët    <dgriet@gmail.com>
  *               2017 - Florent Revest  <revestflo@gmail.com>
  *                    - Niels Tholenaar <info@123quality.nl>
  *
@@ -53,10 +54,11 @@ Item {
             anchors.fill: parent
             Label {
                 id: magneticRotation
-                anchors.centerIn: parent
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.verticalCenter
                 text: compassRoot.rotation
                 font {
-                    pixelSize: parent.height / 4
+                    pixelSize: parent.height / 6
                     capitalization: Font.Capitalize
                     styleName: "SemiCondensed"
                     kerning: true
@@ -69,7 +71,21 @@ Item {
                 anchors.left: magneticRotation.right
                 text: "°"
                 font {
-                    pixelSize: parent.height / 4
+                    pixelSize: parent.height / 6
+                    capitalization: Font.Capitalize
+                    styleName: "SemiCondensed"
+                    kerning: true
+                    preferShaping: true
+                }
+            }
+            Label {
+                id: letterHeading
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: magneticRotation.bottom
+                property var cardinalDirectionsExt: ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+                text: cardinalDirectionsExt[Math.floor((compassRoot.rotation+11.25)/22.5)]
+                font {
+                    pixelSize: parent.height / 6
                     capitalization: Font.Capitalize
                     styleName: "SemiCondensed"
                     kerning: true
@@ -96,7 +112,7 @@ Item {
                 Label {
                     property var angle: (index / outerRing.count) * 2 * Math.PI
                     property var cardinalDirections: ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
-                    rotation: compassRoot.rotation
+                    rotation: index*45
                     color: index == 0 ? "#c2620c" : "white"
                     text: cardinalDirections[index]
                     anchors {
@@ -116,3 +132,4 @@ Item {
         }
     }
 }
+
