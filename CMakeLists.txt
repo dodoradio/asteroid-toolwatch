@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.6.0)
 
 project(asteroid-toolwatch
-	VERSION 0.0.1
+	VERSION 2.1.0
 	DESCRIPTION "An app for showing sensors data on AsteroidOS")
 
 find_package(ECM REQUIRED NO_MODULE)
