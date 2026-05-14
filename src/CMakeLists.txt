@@ -4,7 +4,7 @@ set_target_properties(asteroid-toolwatch PROPERTIES PREFIX "")
 target_link_libraries(
 	asteroid-toolwatch
 	PUBLIC
-		AsteroidApp
+		Asteroid::AsteroidApp6
 )
 
 install(

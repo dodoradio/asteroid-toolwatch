@@ -18,20 +18,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.9
-import QtSensors 5.11
-import org.asteroid.controls 1.0
-import org.asteroid.utils 1.0
-import Nemo.Configuration 1.0
+import QtQuick
+import QtSensors
+import org.asteroid.controls
+import org.asteroid.utils
+import Nemo.Configuration
 
 Item {
     id: barometerRoot
-
 
     PressureSensor {
         id: pressureSensor
         active: true
     }
+
     IconButton {
         onClicked: pageStack.push(settingsPage)
         iconName: "ios-settings-outline"
@@ -40,6 +40,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: pressureText.top
     }
+
     Label {
         id: pressureText
         anchors.centerIn: parent
@@ -47,11 +48,13 @@ Item {
         text: (pressureSensor.reading.pressure + barometerOffset.value)/100
         font.pixelSize: parent.height / 4
     }
+
     ConfigurationValue {
         id: barometerOffset
         key: "/org/asteroidos/sensors/barometer-offset"
         defaultValue: 0
     }
+
     Label {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: pressureText.bottom
